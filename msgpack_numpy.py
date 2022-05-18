@@ -97,7 +97,7 @@ def decode(obj, chain=None):
                     descr = [tuple(tostr(t) if type(t) is bytes else t for t in d) \
                              for d in obj[b'type']]
                 elif b'kind' in obj and obj[b'kind'] == b'O':
-                    return pickle.loads(obj[b'data'])
+                    raise ValueError("refusing to unpickle dtype 'O' numpy array")
                 else:
                     descr = obj[b'type']
                 return np.ndarray(buffer=obj[b'data'],
