@@ -81,7 +81,7 @@ def encode(obj, chain=None):
     else:
         return obj if chain is None else chain(obj)
 
-def decode(obj, chain=None):
+def decode(obj, chain=None, nopickle=False):
     """
     Decoder for deserializing numpy data types.
     """
@@ -97,7 +97,10 @@ def decode(obj, chain=None):
                     descr = [tuple(tostr(t) if type(t) is bytes else t for t in d) \
                              for d in obj[b'type']]
                 elif b'kind' in obj and obj[b'kind'] == b'O':
-                    return pickle.loads(obj[b'data'])
+                    if nopickle:
+                        raise ValueError("dtype 'O' found, not deserializing because nopickle=True")
+                    else:
+                        return pickle.loads(obj[b'data'])
                 else:
                     descr = obj[b'type']
                 return np.ndarray(buffer=obj[b'data'],
